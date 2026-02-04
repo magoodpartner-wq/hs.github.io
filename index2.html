@@ -1,0 +1,376 @@
+import React, { useState, useMemo, useRef } from 'react';
+import { ShoppingCart, Phone, User, CheckCircle, Store, ChevronRight, Package, Info, Loader2, Minus, Plus, Trash2 } from 'lucide-react';
+
+// Google Form Action URL (從您提供的 HTML 中提取)
+const FORM_ACTION_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdimgv8vtLEzCgBkfr2kBwuow4klWgnJ50yZMGnO1djQXCl_Q/formResponse";
+
+// 商品資料結構與 Entry ID 對應表
+// 價格與單位已從標題中解析
+const PRODUCTS_DATA = [
+  {
+    category: "花生、瓜子類",
+    items: [
+      { id: "843637178", name: "棗子夾綜合堅果", price: 270, unit: "半斤" },
+      { id: "612080509", name: "椰棗夾核桃", price: 270, unit: "半斤" },
+      { id: "1160797451", name: "紅棗夾核桃", price: 270, unit: "半斤" },
+      { id: "1973732557", name: "開心果", price: 200, unit: "半斤" },
+      { id: "159317544", name: "開心果", price: 380, unit: "斤" },
+      { id: "1933751078", name: "焦糖葵瓜子", price: 140, unit: "斤" },
+      { id: "1689163411", name: "紅棗葵瓜子", price: 150, unit: "斤" },
+      { id: "1600471384", name: "花生酥心糖", price: 100, unit: "半斤" },
+      { id: "1865131389", name: "黑芝麻酥心糖", price: 100, unit: "半斤" },
+      { id: "692730322", name: "帶殼杏仁果", price: 280, unit: "斤" },
+      { id: "852648668", name: "黑金剛花生", price: 200, unit: "斤" },
+      { id: "1658185814", name: "甜香園南棗核桃糕", price: 350, unit: "1kg" },
+      { id: "1524292667", name: "綜合蔬果脆片", price: 140, unit: "包" },
+      { id: "2021123749", name: "烘焙綜合堅果(四寶)", price: 350, unit: "400g" },
+    ]
+  },
+  {
+    category: "香菇蜜餞類",
+    items: [
+      { id: "325386773", name: "埔里中香菇", price: 400, unit: "150g" },
+      { id: "596443511", name: "台灣芭樂乾", price: 140, unit: "包" },
+      { id: "233027444", name: "台灣芒果乾", price: 240, unit: "包" },
+      { id: "2071481523", name: "台灣情人果", price: 190, unit: "包" },
+      { id: "673916943", name: "台灣紅心芭樂", price: 190, unit: "包" },
+      { id: "125669254", name: "蜜柑橘瓣", price: 190, unit: "包" },
+      { id: "1033262094", name: "香橙桔片", price: 140, unit: "包" },
+      { id: "1377625744", name: "台灣草莓乾", price: 140, unit: "包" },
+      { id: "1682003617", name: "台灣水蜜桃", price: 190, unit: "包" },
+      { id: "512082226", name: "蒜味豬肉條", price: 300, unit: "半斤" },
+      { id: "1070018511", name: "梅有芒果", price: 150, unit: "包" },
+      { id: "19257553", name: "泰國芒果乾", price: 180, unit: "半斤" },
+      { id: "303684893", name: "龜苓膏軟糖", price: 100, unit: "半斤" },
+      { id: "436533903", name: "蜜汁筷豬肉條子", price: 260, unit: "半斤" },
+    ]
+  },
+  {
+    category: "花生零嘴類 (海鮮肉乾)",
+    items: [
+      { id: "1238150232", name: "一口烏魚子", price: 450, unit: "100g" },
+      { id: "1443317350", name: "特級烏魚子", price: 600, unit: "5兩" },
+      { id: "138509701", name: "厚撕魷魚絲", price: 320, unit: "半斤" },
+      { id: "2139313030", name: "鮪魚糖", price: 180, unit: "250g" },
+      { id: "714684932", name: "麻辣鱈魚切片", price: 180, unit: "250g" },
+      { id: "441790418", name: "起司豬肉乾", price: 320, unit: "半斤" },
+      { id: "1539316366", name: "杏仁小魚乾", price: 300, unit: "半斤" },
+      { id: "1159537493", name: "黑芝麻夾心鱈魚絲", price: 180, unit: "250g" },
+      { id: "1335877443", name: "昆布糖", price: 200, unit: "250g" },
+      { id: "1885206280", name: "炭烤魷魚絲", price: 320, unit: "半斤" },
+      { id: "1259240547", name: "原味魷魚絲", price: 320, unit: "半斤" },
+      { id: "2145456415", name: "炭烤魷魚片", price: 320, unit: "半斤" },
+    ]
+  }
+];
+
+export default function App() {
+  const [customerName, setCustomerName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [quantities, setQuantities] = useState({});
+  const [status, setStatus] = useState("idle"); // idle, submitting, success, error
+  const formRef = useRef(null);
+
+  // 計算總價與購物車數量
+  const summary = useMemo(() => {
+    let total = 0;
+    let count = 0;
+    Object.keys(quantities).forEach(id => {
+      const q = parseInt(quantities[id]) || 0;
+      if (q > 0) {
+        count += q;
+        const item = PRODUCTS_DATA.flatMap(c => c.items).find(i => i.id === id);
+        if (item) total += item.price * q;
+      }
+    });
+    return { total, count };
+  }, [quantities]);
+
+  const handleQuantityChange = (id, delta) => {
+    setQuantities(prev => {
+      const current = prev[id] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const { [id]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [id]: next };
+    });
+  };
+
+  const handleInputChange = (id, val) => {
+    const num = parseInt(val);
+    if (isNaN(num) || num < 0) {
+      if (val === '') {
+         const { [id]: _, ...rest } = quantities;
+         setQuantities(rest);
+      }
+      return;
+    }
+    setQuantities(prev => ({ ...prev, [id]: num }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!customerName || !phoneNumber) {
+      alert("請填寫訂購人姓名與聯絡電話");
+      // 滾動到頂部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (summary.count === 0) {
+      alert("購物車是空的，請至少選擇一項商品");
+      return;
+    }
+
+    setStatus("submitting");
+
+    // 建立表單資料
+    const formData = new FormData();
+    formData.append("entry.52584133", customerName);
+    formData.append("entry.1371524261", phoneNumber);
+
+    Object.keys(quantities).forEach(id => {
+      if (quantities[id] > 0) {
+        formData.append(`entry.${id}`, quantities[id]);
+      }
+    });
+
+    // 提交到隱藏 iframe
+    const form = formRef.current;
+    form.submit();
+
+    // 模擬成功狀態 (因為無法從 iframe 獲取跨域響應)
+    setTimeout(() => {
+      setStatus("success");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 2000);
+  };
+
+  if (status === "success") {
+    return (
+      <div className="min-h-screen bg-[#FDF8F5] flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full border border-orange-100">
+          <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+            <CheckCircle className="text-green-600 w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">訂單已送出！</h2>
+          <p className="text-gray-600 mb-6">
+            感謝您的訂購<br/>
+            <span className="font-semibold text-orange-600">{customerName}</span> 您好，我們將盡快處理您的訂單。
+          </p>
+          <div className="bg-stone-50 rounded-xl p-4 mb-8 text-left text-sm text-gray-500">
+            <p>訂單總計：NT$ {summary.total.toLocaleString()}</p>
+            <p>聯絡電話：{phoneNumber}</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="w-full bg-orange-600 text-white py-3.5 rounded-xl font-bold hover:bg-orange-700 transition shadow-lg shadow-orange-200"
+          >
+            返回首頁再訂一份
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F8F5F2] pb-32 font-sans">
+      {/* 隱藏的 Form 用於提交 */}
+      <form 
+        ref={formRef}
+        action={FORM_ACTION_URL}
+        method="POST"
+        target="hidden_iframe"
+        style={{ display: 'none' }}
+      >
+        <input type="text" name="entry.52584133" value={customerName} readOnly />
+        <input type="text" name="entry.1371524261" value={phoneNumber} readOnly />
+        {Object.entries(quantities).map(([id, qty]) => (
+          <input key={id} type="text" name={`entry.${id}`} value={qty} readOnly />
+        ))}
+      </form>
+      <iframe name="hidden_iframe" style={{ display: 'none' }} />
+
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-md border-b border-orange-100 sticky top-0 z-30 shadow-sm">
+        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="bg-orange-600 p-2 rounded-lg shadow-sm">
+              <Store className="text-white w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg text-gray-800 leading-tight">115 弘森食品行</h1>
+              <p className="text-[10px] text-gray-500 font-medium">迪化街老字號 · 品質保證</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-orange-600 to-orange-700 text-white pt-8 pb-16 px-4 mb-[-2rem]">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">線上快速訂購單</h2>
+          <p className="text-orange-100 text-sm sm:text-base opacity-90">
+            請直接輸入數量，系統將自動計算金額。<br className="sm:hidden"/>價格與規格如標示。
+          </p>
+        </div>
+      </div>
+
+      <main className="max-w-2xl mx-auto px-4 relative z-10">
+        {/* Step 1: 訂購人資訊 */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-orange-100/50">
+          <div className="flex items-center gap-2 mb-6 border-b border-gray-100 pb-4">
+            <div className="bg-orange-100 p-1.5 rounded-full">
+              <User className="text-orange-600 w-4 h-4" />
+            </div>
+            <h3 className="font-bold text-gray-800">訂購人資訊</h3>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                訂購人姓名 <span className="text-red-500">*</span>
+              </label>
+              <input 
+                type="text"
+                required
+                placeholder="請輸入您的姓名"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition text-gray-800"
+                value={customerName}
+                onChange={e => setCustomerName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                聯絡電話 <span className="text-red-500">*</span>
+              </label>
+              <input 
+                type="tel"
+                required
+                placeholder="請輸入聯絡電話"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition text-gray-800"
+                value={phoneNumber}
+                onChange={e => setPhoneNumber(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Step 2: 商品列表 */}
+        {PRODUCTS_DATA.map((cat, idx) => (
+          <div key={idx} className="mb-8">
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <Package className="text-orange-700 w-5 h-5" />
+              <h3 className="font-bold text-lg text-gray-800">{cat.category}</h3>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-1">
+              {cat.items.map(item => {
+                const qty = quantities[item.id] || 0;
+                return (
+                  <div 
+                    key={item.id} 
+                    className={`
+                      relative bg-white p-4 rounded-2xl border transition-all duration-200 shadow-sm
+                      ${qty > 0 ? 'border-orange-500 ring-1 ring-orange-500 shadow-orange-100' : 'border-gray-100 hover:border-orange-200'}
+                    `}
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-gray-800 text-base mb-1 truncate">{item.name}</h4>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-orange-600 font-bold text-lg">${item.price}</span>
+                          <span className="text-xs text-gray-400 font-medium bg-gray-100 px-1.5 py-0.5 rounded">/{item.unit}</span>
+                        </div>
+                      </div>
+
+                      {/* 數量控制器 */}
+                      <div className="flex items-center bg-gray-50 rounded-xl p-1 shadow-inner border border-gray-100">
+                        <button 
+                          type="button"
+                          onClick={() => handleQuantityChange(item.id, -1)}
+                          disabled={qty === 0}
+                          className={`
+                            w-9 h-9 rounded-lg flex items-center justify-center transition
+                            ${qty === 0 ? 'text-gray-300 cursor-not-allowed' : 'bg-white text-orange-600 shadow-sm hover:bg-orange-50 active:scale-95 border border-gray-200'}
+                          `}
+                        >
+                          {qty === 1 ? <Trash2 className="w-4 h-4" /> : <Minus className="w-4 h-4" />}
+                        </button>
+                        <input 
+                          type="number"
+                          min="0"
+                          className="w-12 text-center bg-transparent font-bold text-gray-800 outline-none p-0 text-lg"
+                          value={qty === 0 ? '' : qty}
+                          placeholder="0"
+                          onChange={e => handleInputChange(item.id, e.target.value)}
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => handleQuantityChange(item.id, 1)}
+                          className="w-9 h-9 rounded-lg bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-200 hover:bg-orange-700 active:scale-95 transition"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </main>
+
+      {/* Sticky Footer Cart */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 sm:pb-6 pt-2 pointer-events-none">
+        <div className="max-w-2xl mx-auto pointer-events-auto">
+          <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl flex items-center justify-between border border-white/10 ring-1 ring-black/5">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="bg-orange-500 p-2.5 rounded-xl shadow-lg shadow-orange-900/20">
+                  <ShoppingCart className="text-white w-5 h-5" />
+                </div>
+                {summary.count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-white text-orange-600 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-orange-500 shadow-sm">
+                    {summary.count}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total</span>
+                <span className="text-white text-xl font-bold leading-none">
+                  <span className="text-sm font-normal mr-0.5 text-gray-400">NT$</span>
+                  {summary.total.toLocaleString()}
+                </span>
+              </div>
+            </div>
+            
+            <button 
+              disabled={status === "submitting"}
+              onClick={handleSubmit}
+              className={`
+                flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-base transition shadow-lg
+                ${status === "submitting" 
+                  ? 'bg-gray-700 text-gray-400 cursor-wait' 
+                  : 'bg-white text-gray-900 hover:bg-gray-50 active:scale-95 shadow-orange-900/10'
+                }
+              `}
+            >
+              {status === "submitting" ? (
+                <>
+                  <Loader2 className="animate-spin w-4 h-4" />
+                  <span>處理中</span>
+                </>
+              ) : (
+                <>
+                  <span>確認訂購</span>
+                  <ChevronRight className="w-4 h-4 text-orange-500" />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
