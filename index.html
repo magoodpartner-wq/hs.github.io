@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 白沙屯北港進香報名</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自定義加載動畫 */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+    </style>
+</head>
+<body class="bg-[#FDFBF7] pb-12 min-h-screen">
+
+    <!-- 成功訊息畫面 (預設隱藏) -->
+    <div id="success-view" class="hidden min-h-screen fixed inset-0 bg-stone-50 z-50 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center border-t-8 border-red-600">
+            <div class="mx-auto bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mb-6">
+                <!-- CheckCircle Icon -->
+                <svg class="w-10 h-10 text-green-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">報名成功！</h2>
+            <p class="text-gray-600 mb-8">感謝您的參與，我們已收到您的報名資訊。</p>
+            <button onclick="resetForm()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-full transition-colors w-full">
+                填寫下一筆
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要內容 -->
+    <div id="main-view">
+        <!-- Hero Header -->
+        <div class="w-full bg-red-800 shadow-lg relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/chinese-pattern.png')]"></div>
+            <div class="max-w-4xl mx-auto">
+                <!-- Main Header Image -->
+                <div class="w-full aspect-[21/9] md:aspect-[3/1] relative bg-gray-200">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVCeFHpmHYl29g_1nJFP7ouUSNEmtpPRZXRFCezCkRiGKtdDewCzkMXD3HCSlbsk7Gu31N1H99eDyyFac5QJ62KRKDGZLaaxopN4RzcP91ekw_QCub2rD6RbWKeai7eSKi1_kbgw_2tnBdanuH4o24JXQU3fSGIGRN0aM6FFS9zOpCa12zx6En7pTccKgbKPeqG37REPB7zo0sZI=w1010?key=HsvizbryWxioUGV0m2PKKg" alt="2026白沙屯北港進香" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-3xl mx-auto px-4 -mt-8 relative z-10">
+            
+            <!-- Title Card -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-6 border-t-4 border-yellow-500">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-wide">
+                    2026 白沙屯北港進香報名
+                </h1>
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 text-gray-700">
+                    <p class="font-medium mb-1 flex items-center">
+                        📅 報名日期：3/11 ~ 4/9
+                    </p>
+                    <p class="font-medium text-red-700">
+                        💰 報名費 $700 (衣服發完後減免 $200)
+                    </p>
+                </div>
+            </div>
+
+            <form id="registrationForm" onsubmit="handleSubmit(event)" class="space-y-6">
+                
+                <!-- Section 1: Personal Info -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center pb-2 border-b border-gray-100">
+                        <!-- User Icon -->
+                        <svg class="w-5 h-5 mr-2 text-red-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        基本資料
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Name Input -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                您的大名 (完整姓名) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" name="entry.345964497" required placeholder="請輸入您的真實姓名" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-gray-50 focus:bg-white">
+                                <!-- User Icon Small -->
+                                <svg class="w-5 h-5 text-gray-400 absolute right-3 top-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                        </div>
+
+                        <!-- Friend Ref Input -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                您是誰的朋友?
+                            </label>
+                            <div class="relative">
+                                <input type="text" name="entry.472189431" placeholder="介紹人姓名 (選填)" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all bg-gray-50 focus:bg-white">
+                                <!-- Users Icon -->
+                                <svg class="w-5 h-5 text-gray-400 absolute right-3 top-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Clothing -->
+                <div class="bg-white rounded-xl shadow-sm p-6 overflow-hidden">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center pb-2 border-b border-gray-100">
+                        <!-- Shirt Icon -->
+                        <svg class="w-5 h-5 mr-2 text-red-600" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path></svg>
+                        進香服尺寸
+                    </h2>
+
+                    <!-- Size Chart Image -->
+                    <div class="mb-8 bg-gray-50 rounded-lg p-2 border border-gray-200">
+                        <p class="text-xs text-center text-gray-500 mb-2">尺寸參考表</p>
+                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVCjjys639eEsx4MwbEGL2A4j_Kb8vmXGPmIhneQ-4fQCLJc4w-steu2JPvAnmQpSF-2xinQ9yqcZGd_-cuenpFc1wgK5aStLRLZhJWH3ol9Tfkkht9pu8ccEtIrDyMsXfES786FQj1b7UWZiu3N_efu74YMbG6oRJ1mfqLaHu5A-s8aqnyI8fKeR3MDl3ZBEJOLLCTmyw1nMlNH=w740?key=HsvizbryWxioUGV0m2PKKg" alt="尺寸表" class="w-full h-auto rounded mix-blend-multiply">
+                    </div>
+
+                    <!-- Size Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                            選擇尺寸 <span class="text-red-500">*</span>
+                        </label>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3" id="size-container">
+                            <!-- JS will populate buttons here -->
+                        </div>
+                        <!-- Hidden Input for Form Submission -->
+                        <input type="hidden" name="entry.61922842" id="size-input" required>
+                        <p id="size-error" class="hidden text-red-500 text-sm mt-2">請選擇一個尺寸</p>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl text-lg font-bold shadow-lg flex items-center justify-center space-x-2 transition-all duration-300 bg-gradient-to-r from-red-600 to-red-700 text-white hover:shadow-xl hover:-translate-y-1">
+                        <!-- Send Icon -->
+                        <svg id="btn-icon-send" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        
+                        <!-- Loader Icon (Hidden by default) -->
+                        <svg id="btn-icon-loading" class="hidden w-6 h-6 animate-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                        
+                        <span id="btn-text">確認送出報名</span>
+                    </button>
+                    <p class="text-center text-xs text-gray-400 mt-4">
+                        * 點擊送出即代表確認上述資料無誤
+                    </p>
+                </div>
+
+            </form>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 py-6 text-center text-gray-400 text-sm">
+            <p>© 2026 白沙屯北港進香活動</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuration
+        const FORM_ACTION_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdE_GZZWJ9ZL-L72hGmSVSr5ddp9vNYhILUafjEuef0oZD-bA/formResponse";
+        const sizes = ["S", "M", "L", "XL", "2L", "3L", "5L"];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSizeButtons();
+        });
+
+        // State variables
+        let selectedSize = '';
+
+        function renderSizeButtons() {
+            const container = document.getElementById('size-container');
+            container.innerHTML = sizes.map(size => `
+                <button type="button" 
+                    onclick="handleSizeSelect('${size}')"
+                    class="size-btn relative px-2 py-3 rounded-lg border-2 text-sm font-bold transition-all duration-200 border-gray-200 text-gray-600 hover:border-red-200 hover:bg-gray-50"
+                    data-size="${size}">
+                    ${size}
+                    <div class="check-mark hidden absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-0.5">
+                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function handleSizeSelect(size) {
+            selectedSize = size;
+            document.getElementById('size-input').value = size;
+            document.getElementById('size-error').classList.add('hidden');
+
+            // Update UI
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                const checkMark = btn.querySelector('.check-mark');
+                
+                if (btn.dataset.size === size) {
+                    // Selected state
+                    btn.classList.remove('border-gray-200', 'text-gray-600', 'hover:border-red-200', 'hover:bg-gray-50');
+                    btn.classList.add('border-red-600', 'bg-red-50', 'text-red-700', 'shadow-sm', 'transform', 'scale-105', 'z-10');
+                    checkMark.classList.remove('hidden');
+                } else {
+                    // Default state
+                    btn.classList.add('border-gray-200', 'text-gray-600', 'hover:border-red-200', 'hover:bg-gray-50');
+                    btn.classList.remove('border-red-600', 'bg-red-50', 'text-red-700', 'shadow-sm', 'transform', 'scale-105', 'z-10');
+                    checkMark.classList.add('hidden');
+                }
+            });
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            if (!selectedSize) {
+                document.getElementById('size-error').classList.remove('hidden');
+                return;
+            }
+
+            // Set Loading State
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const iconSend = document.getElementById('btn-icon-send');
+            const iconLoading = document.getElementById('btn-icon-loading');
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+            submitBtn.classList.remove('bg-gradient-to-r', 'from-red-600', 'to-red-700', 'hover:shadow-xl', 'hover:-translate-y-1');
+            btnText.textContent = "資料傳送中...";
+            iconSend.classList.add('hidden');
+            iconLoading.classList.remove('hidden');
+
+            // Collect Data
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+
+            try {
+                // Submit to Google Forms
+                await fetch(FORM_ACTION_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                });
+
+                // Show Success View
+                setTimeout(() => {
+                    document.getElementById('success-view').classList.remove('hidden');
+                    // Reset Button State
+                    resetButtonState();
+                }, 500); // Small delay for UX
+
+            } catch (error) {
+                console.error("Submission Error:", error);
+                alert("傳送失敗，請稍後再試或檢查網路連線。");
+                resetButtonState();
+            }
+        }
+
+        function resetButtonState() {
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const iconSend = document.getElementById('btn-icon-send');
+            const iconLoading = document.getElementById('btn-icon-loading');
+
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+            submitBtn.classList.add('bg-gradient-to-r', 'from-red-600', 'to-red-700', 'hover:shadow-xl', 'hover:-translate-y-1');
+            btnText.textContent = "確認送出報名";
+            iconSend.classList.remove('hidden');
+            iconLoading.classList.add('hidden');
+        }
+
+        function resetForm() {
+            // Reset Form Values
+            document.getElementById('registrationForm').reset();
+            selectedSize = '';
+            document.getElementById('size-input').value = '';
+            
+            // Reset Size Buttons UI
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                const checkMark = btn.querySelector('.check-mark');
+                btn.classList.add('border-gray-200', 'text-gray-600', 'hover:border-red-200', 'hover:bg-gray-50');
+                btn.classList.remove('border-red-600', 'bg-red-50', 'text-red-700', 'shadow-sm', 'transform', 'scale-105', 'z-10');
+                checkMark.classList.add('hidden');
+            });
+
+            // Hide Success View
+            document.getElementById('success-view').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
